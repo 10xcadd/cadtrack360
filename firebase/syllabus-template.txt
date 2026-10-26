@@ -1,0 +1,6 @@
+# Paste into Admin > Courses & syllabus > "Create course / import syllabus".
+# One topic per line:  Module | Topic          (add  | optional  for optional topics)
+# Replace the examples below with the REAL institute syllabus. These are format examples only.
+Module 1 name | First topic name
+Module 1 name | Second topic name
+Module 2 name | Third topic name | optional

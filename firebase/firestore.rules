@@ -1,0 +1,77 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function me() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function ok() { return request.auth != null && me().status == 'active'; }
+    function role(r) { return ok() && me().role == r; }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+
+    match /users/{u} {
+      allow read: if ok() && (request.auth.uid == u || me().role == 'admin'
+                     || (me().role == 'faculty' && resource.data.role == 'student'));
+      allow write: if role('admin');
+    }
+    match /courses/{c} {
+      allow read: if ok();
+      allow write: if role('admin');
+    }
+    match /sessions/{s} {
+      allow read: if ok() && (me().role == 'admin' || resource.data.studentUid == request.auth.uid
+                     || resource.data.facultyUid == request.auth.uid);
+      // Faculty records a session. It always starts as "taught"; never approved.
+      allow create: if role('faculty')
+        && request.resource.data.facultyUid == request.auth.uid
+        && request.resource.data.status == 'taught'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.topicIds.size() > 0
+        && request.resource.data.keys().hasOnly(['courseId','topicIds','studentUid','studentId','studentName',
+             'facultyUid','facultyName','date','title','notes','status','createdAt'])
+        && me().courses.hasAny([request.resource.data.courseId])
+        && get(/databases/$(database)/documents/users/$(request.resource.data.studentUid))
+             .data.courses.hasAny([request.resource.data.courseId]);
+      allow update: if ok() && (
+        // Student response: only own session, only from taught/clarification, never to approved.
+        (me().role == 'student' && resource.data.studentUid == request.auth.uid
+          && resource.data.status in ['taught','clarification']
+          && changed().hasOnly(['status','rating','resp','comment','revTopics','ackAt'])
+          && request.resource.data.ackAt == request.time
+          && request.resource.data.rating is int && request.resource.data.rating >= 1 && request.resource.data.rating <= 5
+          && request.resource.data.resp in ['covered_ok','covered_revision','not_covered','clarify']
+          && request.resource.data.status == (request.resource.data.resp == 'not_covered' ? 'disputed' : 'submitted'))
+        ||
+        // Faculty review: only assigned faculty, only submitted/disputed. Disputes and non-approvals need a note.
+        (me().role == 'faculty' && resource.data.facultyUid == request.auth.uid
+          && resource.data.status in ['submitted','disputed']
+          && changed().hasOnly(['status','reviewNote','reviewedAt','reviewedBy','facRevTopics'])
+          && request.resource.data.status in ['approved','rejected','clarification','revision']
+          && request.resource.data.reviewedAt == request.time
+          && request.resource.data.reviewedBy == request.auth.uid
+          && ((request.resource.data.status == 'approved' && resource.data.status == 'submitted'
+                && resource.data.resp != 'clarify')
+              || request.resource.data.reviewNote.size() > 0))
+        ||
+        // Admin reopen: mandatory reason, history kept in sessionEvents.
+        (me().role == 'admin'
+          && changed().hasOnly(['status','reopenReason','reopenedAt','reopenedBy'])
+          && request.resource.data.status == 'taught'
+          && request.resource.data.reopenReason.size() > 0
+          && request.resource.data.reopenedAt == request.time
+          && request.resource.data.reopenedBy == request.auth.uid));
+      allow delete: if false;
+    }
+    // Append-only history.
+    match /sessionEvents/{e} {
+      allow read: if ok() && (me().role == 'admin' || resource.data.studentUid == request.auth.uid
+                     || resource.data.facultyUid == request.auth.uid);
+      allow create: if ok() && request.resource.data.actorUid == request.auth.uid
+                     && request.resource.data.at == request.time;
+      allow update, delete: if false;
+    }
+    match /notifications/{n} {
+      allow read: if ok() && resource.data.toUid == request.auth.uid;
+      allow create: if ok();
+      allow update: if ok() && resource.data.toUid == request.auth.uid && changed().hasOnly(['read']);
+      allow delete: if false;
+    }
+  }
+}

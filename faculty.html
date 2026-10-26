@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CADTrack 360 · Faculty</title>
+<link rel="manifest" href="manifest.json"><link rel="icon" href="icons/icon.svg"><meta name="theme-color" content="#0B1F44">
+<style>
+:root{--navy:#0B1F44;--blue:#2F7BFF;--gold:#F5B301;--bg:#F3F5F9;--line:#DDE2EC;--ink:#14213D;--mute:#5B6678;--ok:#12805C;--warn:#B7791F;--bad:#C0362C;--rev:#6D4AC2}
+*{box-sizing:border-box}body{margin:0;font-family:"Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+header{background:var(--navy);color:#fff;display:flex;align-items:center;gap:12px;padding:10px 16px;position:sticky;top:0;z-index:5}
+header b{font-size:17px}header small{color:#9FB2D9;display:block;font-size:12px}header .sp{flex:1}
+nav{display:flex;gap:4px;overflow-x:auto;background:#fff;border-bottom:1px solid var(--line);padding:0 12px}
+nav button{border:0;background:none;padding:12px 14px;color:var(--mute);border-bottom:3px solid transparent;white-space:nowrap;min-height:44px}
+nav button.on{color:var(--navy);border-color:var(--gold);font-weight:600}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+h2{margin:4px 0 12px;font-size:20px}h3{margin:0 0 8px;font-size:16px}
+.btn{background:var(--blue);color:#fff;border:0;border-radius:6px;padding:10px 14px;min-height:44px}
+.btn.alt{background:#fff;color:var(--navy);border:1px solid var(--line)}.btn.bad{background:var(--bad)}.btn.ok{background:var(--ok)}.btn.rev{background:var(--rev)}.btn.sm{min-height:36px;padding:6px 10px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;background:#fff;margin:4px 0 10px}
+label{font-size:13px;color:var(--mute)}label.c{display:flex;gap:8px;align-items:flex-start;color:var(--ink);font-size:14px;margin:6px 0}label.c input{width:auto;margin:3px 0}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}
+.bar{height:8px;background:#E6EAF2;border-radius:4px;overflow:hidden;margin:3px 0 8px}.bar i{display:block;height:100%}
+.row{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tw{overflow-x:auto}
+dialog{border:0;border-radius:10px;padding:18px;width:min(560px,94vw);max-height:90vh;overflow:auto}dialog::backdrop{background:#0B1F4499}
+.stars{display:flex;gap:6px;flex-wrap:wrap}.stars label{border:1px solid var(--line);border-radius:6px;padding:8px 12px;min-height:44px;color:var(--ink);cursor:pointer}
+.stars input{position:absolute;opacity:0}.stars label:has(input:checked){background:var(--gold);border-color:var(--gold);font-weight:700}.stars label:has(input:focus-visible){outline:2px solid var(--blue)}
+#login{max-width:380px;margin:8vh auto;padding:0 16px}.err{color:var(--bad);font-size:14px;min-height:20px}
+#net{background:var(--bad);color:#fff;text-align:center;font-size:13px;padding:4px;display:none}
+.empty{color:var(--mute);text-align:center;padding:24px}.note{background:#FFF7DF;border:1px solid #F1DC96;border-radius:6px;padding:10px;font-size:13px}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+</style></head><body>
+<div id="net">Offline — official submissions need a connection. Drafts stay on this device only.</div>
+<div id="app"></div>
+<dialog id="dlg"></dialog>
+<script src="firebase-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const ROLE='faculty';const DOM="@cadtrack.10xcadd.app"; // ID -> auth identity. Users only ever type their institute ID.
+firebase.initializeApp(CFG);
+const auth=firebase.auth(),db=firebase.firestore(),TS=()=>firebase.firestore.FieldValue.serverTimestamp();
+const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=t=>t&&t.toDate?t.toDate().toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short',timeZone:'Asia/Kolkata'})+' IST':'—';
+const ST={taught:['Awaiting student response','#B7791F'],submitted:['Pending faculty review','#2F7BFF'],disputed:['Disputed — investigate','#C0362C'],clarification:['Clarification requested','#6D4AC2'],revision:['Revision required','#6D4AC2'],approved:['Approved','#12805C'],rejected:['Rejected','#C0362C']};
+const RESP={covered_ok:'Topics covered; no revision needed',covered_revision:'Topics covered; some revision required',not_covered:'Some topics were not covered',clarify:'I need clarification before confirming'};
+const pill=s=>`<span class="pill" style="background:${ST[s][1]}">${ST[s][0]}</span>`;
+const S={user:null,courses:[],sessions:[],users:[],notes:[],tab:'home',unsub:[]};
+const LOGO=`<svg width="34" height="34" viewBox="0 0 512 512" aria-hidden="true"><path d="M256 70 428 165v182L256 442 84 347V165Z" fill="none" stroke="#2F7BFF" stroke-width="30" stroke-linejoin="round"/><path d="M178 262l56 56 104-114" fill="none" stroke="#F5B301" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const course=id=>S.courses.find(c=>c.id===id)||{name:id,topics:[]};
+const tname=(cid,tid)=>{const t=(course(cid).topics||[]).find(x=>x.id===tid);return t?t.name:tid};
+
+/* ===== progress: unique topic IDs only; sessions never count by themselves ===== */
+function prog(c,sess){const T=(c.topics||[]).filter(t=>t.mandatory!==false),n=T.length||1;
+ const set=f=>new Set(sess.filter(s=>s.courseId===c.id&&f(s)).flatMap(s=>s.topicIds));
+ const pc=X=>Math.round(T.filter(t=>X.has(t.id)).length/n*100);
+ return{cov:pc(set(()=>true)),ack:pc(set(s=>s.ackAt&&['covered_ok','covered_revision'].includes(s.resp))),ver:pc(set(s=>s.status==='approved')),T}}
+const bars=p=>[['Teaching coverage',p.cov,'#2F7BFF'],['Student acknowledgement',p.ack,'#F5B301'],['Faculty-verified',p.ver,'#12805C']].map(([l,v,c])=>`<div class="row"><span>${l}</span><b>${v}%</b></div><div class="bar"><i style="width:${v}%;background:${c}"></i></div>`).join('');
+
+/* ===== audit helpers (batched with the state change so both succeed or both fail) ===== */
+function ev(b,s,type,from,to,reason){b.set(db.collection('sessionEvents').doc(),{sessionId:s.id,studentUid:s.studentUid,facultyUid:s.facultyUid,type,from:from||null,to:to||null,reason:reason||null,actorUid:S.user.uid,actorRole:S.user.role,actorId:S.user.loginId,at:TS()})}
+function nt(b,to,text,sid){b.set(db.collection('notifications').doc(),{toUid:to,text,sessionId:sid,read:false,at:TS()})}
+
+/* ===== auth ===== */
+function showLogin(m){S.unsub.forEach(f=>f());S.unsub=[];$('#app').innerHTML=`<div id="login"><div style="text-align:center">${LOGO}<h1 style="margin:6px 0 0;color:var(--navy)">CADTrack 360</h1><div style="color:var(--mute)">by 10XCADD · ${ROLE} portal</div><p style="color:var(--blue);font-weight:600;margin:6px 0 18px">Every Session. Every Topic. Verified.</p></div>
+<form class="card" id="lf"><label for="id">Student ID, Faculty ID or Admin ID</label><input id="id" autocomplete="username" required>
+<label for="pw">Password</label><div style="display:flex;gap:6px"><input id="pw" type="password" autocomplete="current-password" required><button type="button" class="btn alt" id="eye" aria-label="Show or hide password">Show</button></div>
+<div class="err" id="er" role="alert">${esc(m||'')}</div><button class="btn" style="width:100%" id="go">Sign in</button></form></div>`;
+ $('#eye').onclick=()=>{const p=$('#pw');p.type=p.type==='password'?'text':'password';$('#eye').textContent=p.type==='password'?'Show':'Hide'};
+ $('#lf').onsubmit=async e=>{e.preventDefault();$('#go').disabled=true;$('#go').textContent='Signing in…';try{await auth.signInWithEmailAndPassword($('#id').value.trim().toLowerCase()+DOM,$('#pw').value)}catch(x){$('#er').textContent='Wrong ID or password, or the account is suspended.';$('#go').disabled=false;$('#go').textContent='Sign in'}}}
+auth.onAuthStateChanged(async u=>{if(!u){const m=S.flash;S.flash='';return showLogin(m)}
+ try{const d=await db.doc('users/'+u.uid).get();if(!d.exists||d.data().status!=='active')throw 0;S.user={uid:u.uid,...d.data()};if(S.user.role!==ROLE){S.flash='This is the '+ROLE+' portal. Please use the link meant for your role.';S.user=null;return auth.signOut()}start()}
+ catch(e){S.flash='This account is not active or not set up. Contact the administrator.';await auth.signOut()}});
+
+function start(){const u=S.user,sc=db.collection('sessions');
+ S.tab='home';S.unsub.forEach(f=>f());
+ const q=u.role==='admin'?sc.limit(1000):sc.where(u.role==='student'?'studentUid':'facultyUid','==',u.uid);
+ S.unsub=[db.collection('courses').onSnapshot(s=>{S.courses=s.docs.map(d=>({id:d.id,...d.data()}));render()},console.error),
+  q.onSnapshot(s=>{S.sessions=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||9e9)-(a.createdAt?.seconds||9e9));render()},console.error),
+  db.collection('notifications').where('toUid','==',u.uid).onSnapshot(s=>{S.notes=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.at?.seconds||9e9)-(a.at?.seconds||9e9));render()},console.error)];
+ if(u.role!=='student')S.unsub.push((u.role==='admin'?db.collection('users'):db.collection('users').where('role','==','student')).onSnapshot(s=>{S.users=s.docs.map(d=>({uid:d.id,...d.data()}));render()},console.error));
+ render()}
+
+/* ===== shell ===== */
+const TABS={student:[['home','My courses'],['sessions','Sessions']],faculty:[['home','Review queue'],['record','Record session'],['sessions','All sessions'],['progress','Student progress']],admin:[['home','Overview'],['users','Users'],['courses','Courses & syllabus'],['sessions','Session register']]};
+function render(){const u=S.user;if(!u)return;const unread=S.notes.filter(n=>!n.read).length;
+ $('#app').innerHTML=`<header>${LOGO}<div><b>CADTrack 360</b><small>${esc(u.name)} · ${esc(u.loginId)} · ${u.role}</small></div><span class="sp"></span>
+ <button class="btn alt sm" data-a="bell" aria-label="Notifications">Alerts${unread?` (${unread})`:''}</button><button class="btn alt sm" data-a="pw">Password</button><button class="btn alt sm" data-a="out">Log out</button></header>
+ <nav>${TABS[u.role].map(([k,l])=>`<button data-a="tab" data-v="${k}" class="${S.tab===k?'on':''}">${l}</button>`).join('')}</nav><main>${VIEW[u.role][S.tab]()}</main>`}
+const sessCard=(s,acts)=>`<div class="card"><div class="row"><b style="color:var(--ink)">${esc(s.title)}</b>${pill(s.status)}</div>
+ <div style="font-size:14px;margin:6px 0">${esc(course(s.courseId).name)} · Trained on ${esc(s.date)} by ${esc(s.facultyName)}${S.user.role!=='student'?' · '+esc(s.studentName)+' ('+esc(s.studentId)+')':''}</div>
+ <div style="font-size:14px">${s.topicIds.map(t=>'• '+esc(tname(s.courseId,t))).join('<br>')}</div>
+ ${s.ackAt?`<div class="note" style="margin-top:8px">Response ${fmt(s.ackAt)} · ${'★'.repeat(s.rating)} · ${esc(RESP[s.resp])}${s.comment?'<br>'+esc(s.comment):''}</div>`:''}
+ ${s.reviewNote?`<div class="note" style="margin-top:8px">Faculty note (${fmt(s.reviewedAt)}): ${esc(s.reviewNote)}</div>`:''}
+ <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">${acts}<button class="btn alt sm" data-a="hist" data-v="${s.id}">History</button></div></div>`;
+const list=(arr,f)=>arr.length?arr.map(f).join(''):'<div class="empty">Nothing here yet.</div>';
+const filt=(k)=>`<select data-a="flt" data-k="${k}" aria-label="Filter by status"><option value="">All statuses</option>${Object.keys(ST).map(s=>`<option value="${s}" ${S[k]===s?'selected':''}>${ST[s][0]}</option>`).join('')}</select>`;
+const fl=(k,arr)=>S[k]?arr.filter(s=>s.status===S[k]):arr;
+
+const VIEW={
+student:{
+ home(){const u=S.user,cs=(u.courses||[]).map(course),todo=S.sessions.filter(s=>['taught','clarification'].includes(s.status));
+  return `${todo.length?`<div class="note" style="margin-bottom:12px"><b>${todo.length} session(s) need your response.</b> Open Sessions to review and acknowledge.</div>`:''}<div class="grid">${cs.map(c=>{const p=prog(c,S.sessions);
+  return `<div class="card"><h3>${esc(c.name)}</h3>${bars(p)}<details><summary>Syllabus topics (${p.T.length})</summary>${p.T.map(t=>{const ss=S.sessions.filter(s=>s.courseId===c.id&&s.topicIds.includes(t.id)),st=ss.some(s=>s.status==='approved')?'✔ Approved':ss.some(s=>s.status==='disputed')?'⚠ Disputed':ss.some(s=>['revision','clarification'].includes(s.status))?'↻ Needs revision':ss.some(s=>s.ackAt)?'… Under review':ss.length?'Taught':'Not yet taught';return `<div style="padding:5px 0"><div class="row"><span>${esc(t.name)}</span><span>${st}</span></div>${t.detail?`<div style="font-size:12px;color:var(--mute)">${esc(t.detail)}</div>`:''}</div>`}).join('')}</details><div class="note" style="margin-top:8px">Acknowledging a session is not approval. Verified progress rises only after faculty approval.</div></div>`}).join('')||'<div class="empty">No courses assigned yet.</div>'}</div>`},
+ sessions(){return `<h2>Your sessions</h2>${filt('f1')}${list(fl('f1',S.sessions),s=>sessCard(s,['taught','clarification'].includes(s.status)?`<button class="btn" data-a="ack" data-v="${s.id}">Review and Acknowledge Session</button>`:''))}`}},
+faculty:{
+ home(){const q=S.sessions.filter(s=>['submitted','disputed'].includes(s.status));
+  return `<h2>Awaiting your review (${q.length})</h2>${list(q,s=>sessCard(s,`<button class="btn" data-a="rev" data-v="${s.id}">Review response</button>`))}`},
+ record(){const cs=(S.user.courses||[]).map(course);
+  return `<h2>Record a training session</h2><form class="card" id="rf"><label>Course</label><select id="rc">${cs.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+  <label>Session title</label><input id="rt" required><label>Training date (actual)</label><input id="rd" type="date" required max="${new Date().toISOString().slice(0,10)}">
+  <div id="rx"></div><label>Learning notes (optional)</label><textarea id="rn" rows="2"></textarea><button class="btn">Record session</button><p class="note">Recording a session does not approve it. Each student must respond, then you review.</p></form>`},
+ sessions(){return `<h2>All sessions</h2>${filt('f2')}${list(fl('f2',S.sessions),s=>sessCard(s,''))}`},
+ progress(){const rows=[];S.users.filter(u=>u.role==='student').forEach(st=>(st.courses||[]).filter(c=>(S.user.courses||[]).includes(c)).forEach(cid=>{const p=prog(course(cid),S.sessions.filter(s=>s.studentUid===st.uid));rows.push(`<tr><td>${esc(st.name)}<br><small>${esc(st.loginId)}</small></td><td>${esc(course(cid).name)}</td><td>${p.cov}%</td><td>${p.ack}%</td><td><b>${p.ver}%</b></td></tr>`)}));
+  return `<h2>Student progress</h2><div class="card tw"><table><tr><th>Student</th><th>Course</th><th>Taught</th><th>Acknowledged</th><th>Verified</th></tr>${rows.join('')||'<tr><td colspan=5 class="empty">No students assigned.</td></tr>'}</table></div>`}},
+admin:{
+ home(){const A=S.users.filter(u=>u.status==='active'),c=s=>S.sessions.filter(x=>x.status===s).length;
+  const k=[['Active students',A.filter(u=>u.role==='student').length],['Active faculty',A.filter(u=>u.role==='faculty').length],['Courses',S.courses.length],['Awaiting student',c('taught')],['Awaiting faculty',c('submitted')],['Disputed',c('disputed')],['Revision required',c('revision')],['Approved',c('approved')]];
+  const stale=S.courses.filter(co=>{const l=S.sessions.filter(s=>s.courseId===co.id)[0];return !l||(Date.now()/1000-(l.createdAt?.seconds||0))>14*86400});
+  return `<div class="grid">${k.map(([l,v])=>`<div class="card"><div style="color:var(--mute);font-size:13px">${l}</div><div style="font-size:28px;font-weight:700">${v}</div></div>`).join('')}</div>
+  <div class="card"><h3>Stalled courses (no session in 14 days)</h3>${stale.map(x=>esc(x.name)).join(', ')||'None'}</div>`},
+ users(){return `<h2>Users</h2><div style="margin-bottom:10px"><button class="btn" data-a="newu">Create account</button></div><div class="card tw"><table><tr><th>ID</th><th>Name</th><th>Role</th><th>Courses</th><th>Status</th><th>Created</th><th></th></tr>${S.users.map(u=>`<tr><td>${esc(u.loginId)}</td><td>${esc(u.name)}</td><td>${u.role}</td><td>${(u.courses||[]).map(c=>esc(course(c).name)).join(', ')}</td><td>${u.status}</td><td>${fmt(u.createdAt)}</td><td>${u.uid===S.user.uid?'':`<button class="btn alt sm" data-a="tog" data-v="${u.uid}">${u.status==='active'?'Suspend':'Activate'}</button> <button class="btn alt sm" data-a="asg" data-v="${u.uid}">Courses</button>`}</td></tr>`).join('')}</table></div>`},
+ courses(){return `<h2>Courses & syllabus</h2><div style="margin-bottom:10px"><button class="btn" data-a="newc">Create course / import syllabus</button></div>${S.courses.map(c=>`<div class="card"><h3>${esc(c.name)} <small style="color:var(--mute)">${esc(c.category)} · v${c.version||1}</small></h3><details><summary>${(c.topics||[]).length} topics</summary>${(c.topics||[]).map(t=>`<div style="font-size:14px;padding:3px 0">${esc(t.name)} ${t.mandatory===false?'<i>(optional)</i>':''}${t.detail?`<div style="font-size:12px;color:var(--mute)">${esc(t.detail)}</div>`:''}</div>`).join('')}</details></div>`).join('')||'<div class="empty">No courses yet.</div>'}`},
+ sessions(){return `<h2>Session register</h2>${filt('f3')} <button class="btn alt sm" data-a="csv">Export CSV</button>${list(fl('f3',S.sessions),s=>sessCard(s,s.status!=='taught'?`<button class="btn rev sm" data-a="reopen" data-v="${s.id}">Reopen with reason</button>`:''))}`}}};
+
+/* ===== dialogs ===== */
+const dlg=$('#dlg');const open=h=>{dlg.innerHTML=h;if(!dlg.open)dlg.showModal()};const close=()=>dlg.open&&dlg.close();
+const sess=id=>S.sessions.find(s=>s.id===id);
+function ackDialog(id,keep){const s=sess(id),d=keep||JSON.parse(localStorage.getItem('draft-'+id)||'{}');
+ open(`<h3>Review and acknowledge</h3><div class="note">Please review the session details carefully before submitting your response. By acknowledging this session, you confirm that you have reviewed the recorded training topics and are providing an accurate response about your learning experience.<br><br>If a topic was not covered, was only partially covered, or requires further explanation, use the appropriate feedback option instead of confirming something inaccurate.<br><br>Your response will be recorded with a timestamp and submitted for faculty review. Your acknowledgement does not, by itself, complete or approve the session.</div>
+ <p><b>${esc(s.title)}</b> · ${esc(s.date)}<br>${s.topicIds.map(t=>'• '+esc(tname(s.courseId,t))).join('<br>')}</p>
+ <form id="af"><label>Rating (required)</label><div class="stars" role="radiogroup">${[[1,'Very poor'],[2,'Needs significant improvement'],[3,'Satisfactory'],[4,'Good'],[5,'Excellent']].map(([n,l])=>`<label title="${l}"><input type="radio" name="r" value="${n}" ${d.rating==n?'checked':''}>${n} — ${l}</label>`).join('')}</div>
+ <label style="display:block;margin-top:10px">Your response (required)</label>${Object.entries(RESP).map(([k,v])=>`<label class="c"><input type="radio" name="p" value="${k}" ${d.resp===k?'checked':''}>${v}</label>`).join('')}
+ <label>Topics needing revision / not covered</label>${s.topicIds.map(t=>`<label class="c"><input type="checkbox" name="t" value="${t}" ${(d.revTopics||[]).includes(t)?'checked':''}>${esc(tname(s.courseId,t))}</label>`).join('')}
+ <label>Comment (required if topics were not covered or you need clarification)</label><textarea name="c" rows="3">${esc(d.comment||'')}</textarea><div class="err" id="ae" role="alert"></div>
+ <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn alt" data-a="draft" data-v="${id}">Save local draft</button><button type="button" class="btn alt" data-a="close">Cancel</button><button class="btn">Continue</button></div></form>`);
+ $('#af').onsubmit=e=>{e.preventDefault();const f=new FormData(e.target),r=+f.get('r'),p=f.get('p'),t=f.getAll('t'),c=(f.get('c')||'').trim(),m=$('#ae');
+  if(!r)return m.textContent='Choose a rating from 1 to 5.';if(!p)return m.textContent='Choose how you want to respond.';
+  if(p==='not_covered'&&!c)return m.textContent='Explain what was not covered.';if(p==='not_covered'&&!t.length)return m.textContent='Select the topics that were not covered.';
+  if(p==='covered_revision'&&!t.length)return m.textContent='Select the topics that need revision.';if(p==='clarify'&&!c)return m.textContent='Tell faculty what you need clarified.';
+  confirmAck(id,{rating:r,resp:p,revTopics:t,comment:c})}}
+function confirmAck(id,d){open(`<h3>Confirm Session Response?</h3><p>You are about to submit your response for this training session. Your response, rating, comments, and relevant acknowledgement details will be recorded with a timestamp and made available to authorized faculty for review.</p><p>After submission, you will not be able to edit or withdraw this response yourself. If a correction is required, contact the administrator.</p><p>Your response does not mean that the session or the entire course is automatically approved. Verified progress will be updated only after the required review and completion conditions have been satisfied.</p><div class="err" id="ce" role="alert">${navigator.onLine?'':'You are offline. Connect to submit.'}</div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn alt" id="gb">Go Back</button><button class="btn" id="cs" ${navigator.onLine?'':'disabled'}>Confirm and Submit</button></div>`);
+ $('#gb').onclick=()=>ackDialog(id,d);
+ $('#cs').onclick=async()=>{const s=sess(id),to=d.resp==='not_covered'?'disputed':'submitted',b=db.batch();$('#cs').disabled=true;$('#cs').textContent='Submitting…';
+  b.update(db.doc('sessions/'+id),{status:to,rating:d.rating,resp:d.resp,comment:d.comment,revTopics:d.revTopics,ackAt:TS()});ev(b,s,'student_response',s.status,to,d.comment);nt(b,s.facultyUid,`${S.user.name} responded to "${s.title}"`,id);
+  try{await b.commit();localStorage.removeItem('draft-'+id);close()}catch(e){$('#ce').textContent='Not submitted. This session may have changed or you are not permitted. Refresh and try again.';$('#cs').disabled=false;$('#cs').textContent='Confirm and Submit'}}}
+function reviewDialog(id){const s=sess(id),prev=S.sessions.filter(x=>x.studentUid===s.studentUid&&x.id!==id&&x.topicIds.some(t=>s.topicIds.includes(t)));
+ open(`<h3>Review: ${esc(s.title)}</h3><p>${esc(s.studentName)} (${esc(s.studentId)}) · ${esc(s.date)} · ${pill(s.status)}</p><p>${s.topicIds.map(t=>'• '+esc(tname(s.courseId,t))).join('<br>')}</p>
+ <div class="note">${'★'.repeat(s.rating)} (${s.rating}/5) · ${esc(RESP[s.resp])} · ${fmt(s.ackAt)}<br>${esc(s.comment||'No comment')}<br>Flagged topics: ${(s.revTopics||[]).map(t=>esc(tname(s.courseId,t))).join(', ')||'none'}</div>
+ ${s.status==='disputed'?'<p class="err">The student reports topics were not covered. This is not approvable without a written note, and does not count toward verified progress.</p>':''}
+ <p style="font-size:13px;color:var(--mute)">Earlier sessions on these topics: ${prev.map(x=>esc(x.date)+' ('+ST[x.status][0]+')').join('; ')||'none'}</p>
+ <label>Review note (required to reject, request clarification, require revision, or resolve a dispute)</label><textarea id="rv" rows="3"></textarea>
+ <label>Topics to revise (for “Require revision”)</label>${s.topicIds.map(t=>`<label class="c"><input type="checkbox" name="rt" value="${t}" ${(s.revTopics||[]).includes(t)?'checked':''}>${esc(tname(s.courseId,t))}</label>`).join('')}<div class="err" id="re" role="alert"></div>
+ <div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn ok" data-a="dec" data-v="${id}" data-d="approved">Approve</button><button class="btn bad" data-a="dec" data-v="${id}" data-d="rejected">Reject</button><button class="btn rev" data-a="dec" data-v="${id}" data-d="clarification">Request clarification</button><button class="btn rev" data-a="dec" data-v="${id}" data-d="revision">Require revision</button><button class="btn alt" data-a="close">Close</button></div>`)}
+async function decide(id,to){const s=sess(id),n=$('#rv').value.trim(),rt=[...document.querySelectorAll('[name=rt]:checked')].map(x=>x.value),m=$('#re');
+ if(to==='approved'&&s.status==='disputed'&&!n)return m.textContent='Add a note explaining why the dispute is resolved.';
+ if(to!=='approved'&&!n)return m.textContent='A note is required for this decision.';if(to==='revision'&&!rt.length)return m.textContent='Select topics to revise.';
+ if(to==='approved'&&s.resp==='clarify')return m.textContent='The student asked for clarification. Request clarification instead.';
+ const b=db.batch(),u={status:to,reviewNote:n,reviewedAt:TS(),reviewedBy:S.user.uid};if(to==='revision')u.facRevTopics=rt;
+ b.update(db.doc('sessions/'+id),u);ev(b,s,'faculty_'+to,s.status,to,n);nt(b,s.studentUid,`"${s.title}": ${ST[to][0]}`,id);
+ try{await b.commit();close()}catch(e){m.textContent='Not saved. You may not be assigned to this session, or it already changed.'}}
+async function reason(title,fn){open(`<h3>${title}</h3><label>Reason (required, recorded in the audit history)</label><textarea id="rs" rows="3"></textarea><div class="err" id="rse"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn alt" data-a="close">Cancel</button><button class="btn" id="rok">Confirm</button></div>`);
+ $('#rok').onclick=async()=>{const r=$('#rs').value.trim();if(!r)return $('#rse').textContent='A reason is required.';try{await fn(r);close()}catch(e){$('#rse').textContent='Not saved: '+e.message}}}
+function history(id){db.collection('sessionEvents').where('sessionId','==',id).get().then(q=>{const e=q.docs.map(d=>d.data()).sort((a,b)=>(a.at?.seconds||0)-(b.at?.seconds||0));
+ open(`<h3>Session history</h3>${e.map(x=>`<div class="card"><b>${esc(x.type)}</b> · ${fmt(x.at)}<br>${esc(x.actorId)} (${x.actorRole})<br>${esc(x.from||'—')} → ${esc(x.to||'—')}${x.reason?'<br><i>'+esc(x.reason)+'</i>':''}</div>`).join('')||'<div class="empty">No events.</div>'}<button class="btn alt" data-a="close">Close</button>`)}).catch(()=>open('<p>History unavailable.</p><button class="btn alt" data-a="close">Close</button>'))}
+
+/* ===== admin forms ===== */
+function newUser(){open(`<h3>Create account</h3><form id="uf"><label>Role</label><select id="ur"><option value="student">Student</option><option value="faculty">Faculty</option></select><label>Full name</label><input id="un" required><label>WhatsApp number (optional, to send the credentials)</label><input id="up" type="tel" inputmode="tel" placeholder="9876543210"><label>Courses</label>${S.courses.map(c=>`<label class="c"><input type="checkbox" name="uc" value="${c.id}">${esc(c.name)}</label>`).join('')||'<small>Create a course first.</small>'}<div class="err" id="ue"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn alt" data-a="close">Cancel</button><button class="btn">Create</button></div></form>`);
+ $('#uf').onsubmit=async e=>{e.preventDefault();const role=$('#ur').value,pre=role==='student'?'S':'F',mx=Math.max(1000,...S.users.filter(u=>u.role===role).map(u=>parseInt(u.loginId.slice(1))||0)),id=pre+(mx+1),a=new Uint8Array(8);crypto.getRandomValues(a);const pw=[...a].map(x=>'abcdefghjkmnpqrstuvwxyz23456789'[x%31]).join('')+'A#';
+  let sec;try{sec=firebase.apps.find(x=>x.name==='sec')||firebase.initializeApp(CFG,'sec');const c=await sec.auth().createUserWithEmailAndPassword(id.toLowerCase()+DOM,pw);
+  await db.doc('users/'+c.user.uid).set({loginId:id,name:$('#un').value.trim(),phone:($('#up').value||'').replace(/\D/g,''),role,status:'active',courses:[...document.querySelectorAll('[name=uc]:checked')].map(x=>x.value),createdAt:TS(),createdBy:S.user.uid});await sec.auth().signOut();
+  const nm=$('#un').value.trim(),link=new URL(role==='student'?'index.html':'faculty.html',location.href).href;S.ph=($('#up').value||'').replace(/\D/g,'');
+  S.msg=`Hello ${nm},\n\nYour CADTrack 360 by 10XCADD ${role} account is ready.\n\nLogin ID: ${id}\nPassword: ${pw}\nLink: ${link}\n\nPlease change your password after your first login.`;
+  open(`<h3>Account created</h3><textarea readonly rows="9">${esc(S.msg)}</textarea><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ok" data-a="wa">Send on WhatsApp</button><button class="btn alt" data-a="cp">Copy message</button><button class="btn alt" data-a="close">Done</button></div><p class="note">The password is shown once and is not stored. Send or copy it now.</p>`)}catch(x){$('#ue').textContent='Could not create: '+x.message}}}
+function newCourse(){open(`<h3>Create course / syllabus version</h3><form id="cf"><label>Course ID (letters, no spaces, e.g. acad)</label><input id="ci" required pattern="[a-z0-9-]+"><label>Course name</label><input id="cn" required><label>Category</label><input id="cg" list="cats" required><datalist id="cats"><option>General CAD / AutoCAD<option>Civil<option>Mechanical<option>Interior Design</datalist>
+ <label>Syllabus: one topic per line as <code>Module | Topic</code> (add <code>| optional</code> for optional topics). Paste your real syllabus.</label><textarea id="ct" rows="7" required></textarea><div class="err" id="ce2"></div><div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn alt" data-a="close">Cancel</button><button class="btn">Validate and save</button></div></form>`);
+ $('#cf').onsubmit=async e=>{e.preventDefault();const ids=new Set(),topics=[],bad=[];$('#ct').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach((l,i)=>{const p=l.split('|').map(x=>x.trim());if(p.length<2||!p[0]||!p[1])return bad.push('Line '+(i+1)+': needs Module | Topic');const id='T'+String(topics.length+1).padStart(3,'0');ids.add(id);topics.push({id,module:p[0],name:p[1],mandatory:p[2]!=='optional'})});
+  if(bad.length)return $('#ce2').textContent=bad.slice(0,3).join(' ; ');const ref=db.doc('courses/'+$('#ci').value),ex=await ref.get();if(ex.exists)return $('#ce2').textContent='That course ID exists. Use a new ID for a new syllabus version.';
+  await ref.set({name:$('#cn').value.trim(),category:$('#cg').value.trim(),topics,version:1,createdAt:TS(),createdBy:S.user.uid});close()}}
+
+/* ===== events ===== */
+document.addEventListener('click',async e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a,v=el.dataset.v,u=S.user;
+ if(a==='tab'){S.tab=v;render()}else if(a==='out')auth.signOut();else if(a==='close')close();
+ else if(a==='ack')ackDialog(v);else if(a==='rev')reviewDialog(v);else if(a==='dec')decide(v,el.dataset.d);else if(a==='hist')history(v);
+ else if(a==='draft'){const f=new FormData($('#af'));localStorage.setItem('draft-'+v,JSON.stringify({rating:+f.get('r')||0,resp:f.get('p'),revTopics:f.getAll('t'),comment:f.get('c')}));$('#ae').textContent='Draft saved on this device. It is NOT submitted.'}
+ else if(a==='flt'){}else if(a==='newu')newUser();else if(a==='newc')newCourse();
+ else if(a==='tog'){const t=S.users.find(x=>x.uid===v);await db.doc('users/'+v).update({status:t.status==='active'?'suspended':'active'})}
+ else if(a==='asg'){const t=S.users.find(x=>x.uid===v),r=prompt('Course IDs, comma separated ('+S.courses.map(c=>c.id).join(', ')+')',(t.courses||[]).join(','));if(r!==null)await db.doc('users/'+v).update({courses:r.split(',').map(x=>x.trim()).filter(x=>S.courses.some(c=>c.id===x))})}
+ else if(a==='reopen')reason('Reopen session',async r=>{const s=sess(v),b=db.batch();b.update(db.doc('sessions/'+v),{status:'taught',reopenReason:r,reopenedAt:TS(),reopenedBy:u.uid});ev(b,s,'admin_reopen',s.status,'taught',r);nt(b,s.studentUid,`"${s.title}" was reopened by admin`,v);await b.commit()});
+ else if(a==='wa'){const p=S.ph?(S.ph.length===10?'91'+S.ph:S.ph):'';window.open('https://wa.me/'+p+'?text='+encodeURIComponent(S.msg),'_blank')}else if(a==='cp'){try{await navigator.clipboard.writeText(S.msg);el.textContent='Copied ✓'}catch(x){prompt('Copy this message:',S.msg)}}else if(a==='bell'){open(`<h3>Notifications</h3>${S.notes.map(n=>`<div class="card" style="${n.read?'opacity:.6':''}">${esc(n.text)}<br><small>${fmt(n.at)}</small></div>`).join('')||'<div class="empty">No notifications.</div>'}<button class="btn alt" data-a="close">Close</button>`);S.notes.filter(n=>!n.read).forEach(n=>db.doc('notifications/'+n.id).update({read:true}))}
+ else if(a==='pw'){const p=prompt('New password (min 8 characters)');if(p&&p.length>=8)auth.currentUser.updatePassword(p).then(()=>alert('Password changed.')).catch(()=>alert('For security, sign out, sign in again, then retry.'))}
+ else if(a==='csv'){const rows=[['Report: session register'],['Generated',new Date().toISOString()],['Filter status',S.f3||'all'],[],['Session','Course','Student ID','Student','Faculty','Training date','Status','Rating','Response','Created','Student responded','Reviewed']].concat(fl('f3',S.sessions).map(s=>[s.title,course(s.courseId).name,s.studentId,s.studentName,s.facultyName,s.date,s.status,s.rating||'',s.resp||'',fmt(s.createdAt),fmt(s.ackAt),fmt(s.reviewedAt)]));
+  const a2=document.createElement('a');a2.href=URL.createObjectURL(new Blob([rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n')],{type:'text/csv'}));a2.download='cadtrack-sessions.csv';a2.click()}});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset.a==='flt'){S[el.dataset.k]=el.value;render()}
+ if(el.id==='rc')topicsFor();});
+function topicsFor(){const c=course($('#rc').value),stu=S.users.filter(u=>u.role==='student'&&(u.courses||[]).includes(c.id));
+ $('#rx').innerHTML=`<label>Topics actually taught</label>${(c.topics||[]).map(t=>`<label class="c"><input type="checkbox" name="rtp" value="${t.id}">${esc(t.name)}</label>`).join('')}<label>Students (each responds separately)</label>${stu.map(x=>`<label class="c"><input type="checkbox" name="rst" value="${x.uid}">${esc(x.name)} (${esc(x.loginId)})</label>`).join('')||'<small>No students assigned to this course.</small>'}`}
+new MutationObserver(()=>{if($('#rx')&&!$('#rx').innerHTML)topicsFor()}).observe(document.body,{childList:true,subtree:true});
+document.addEventListener('submit',async e=>{if(e.target.id!=='rf')return;e.preventDefault();const tp=[...document.querySelectorAll('[name=rtp]:checked')].map(x=>x.value),st=[...document.querySelectorAll('[name=rst]:checked')].map(x=>S.users.find(u=>u.uid===x.value));
+ if(!tp.length||!st.length)return alert('Select at least one topic and one student.');
+ const cid=$('#rc').value,dup=S.sessions.filter(s=>s.courseId===cid&&s.date===$('#rd').value&&st.some(x=>x.uid===s.studentUid)&&s.topicIds.some(t=>tp.includes(t)));
+ if(dup.length&&!confirm('Possible duplicate: a session on these topics already exists for this date and student. Record anyway?'))return;
+ const b=db.batch();for(const x of st){const r=db.collection('sessions').doc(),s={id:r.id,studentUid:x.uid,facultyUid:S.user.uid};
+  b.set(r,{courseId:cid,topicIds:tp,studentUid:x.uid,studentId:x.loginId,studentName:x.name,facultyUid:S.user.uid,facultyName:S.user.name,date:$('#rd').value,title:$('#rt').value.trim(),notes:$('#rn').value.trim(),status:'taught',createdAt:TS()});ev(b,s,'session_recorded',null,'taught',null);nt(b,x.uid,`New session to review: ${$('#rt').value.trim()}`,r.id)}
+ try{await b.commit();S.tab='sessions';render()}catch(x){alert('Not saved: '+x.message)}});
+addEventListener('online',()=>$('#net').style.display='none');addEventListener('offline',()=>$('#net').style.display='block');if(!navigator.onLine)$('#net').style.display='block';
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').then(r=>r.addEventListener('updatefound',()=>r.installing.addEventListener('statechange',function(){if(this.state==='installed'&&navigator.serviceWorker.controller)location.reload()})));
+</script></body></html>
