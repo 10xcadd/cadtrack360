@@ -26,3 +26,9 @@ Admin: Courses & syllabus > **Load institute syllabus** (adds the 10 real course
 ## 4. GitHub Pages
 Upload everything in this folder to the repo root (drag and drop), Settings > Pages > deploy from main / root.
 Links: .../index.html (students), .../faculty.html, .../admin.html.
+
+## Logins, forgot password, first login
+- New accounts get an ID like `nishad_102` and password `Nishad@102`. The user must set their own password at first login.
+- Every user's Firebase login is an alias of the admin mailbox (`10xcadd+nishad_102@gmail.com`), so reset emails land in the 10xcadd@gmail.com inbox.
+- Forgot password: user taps "Forgot password?" and enters their ID. Admin gets a Firebase email (check Spam), opens the link, sets a new password, then Users > Reset password > type it > Send on WhatsApp.
+- After updating, re-publish `firebase/firestore.rules` (it now lets a user clear their own must-change-password flag).

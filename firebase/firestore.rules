@@ -10,6 +10,8 @@ service cloud.firestore {
       allow read: if ok() && (request.auth.uid == u || me().role == 'admin'
                      || (me().role == 'faculty' && resource.data.role == 'student'));
       allow write: if role('admin');
+      // A user may only clear their own must-change-password flag.
+      allow update: if ok() && request.auth.uid == u && changed().hasOnly(['mustChange']) && request.resource.data.mustChange == false;
     }
     match /courses/{c} {
       allow read: if ok();
