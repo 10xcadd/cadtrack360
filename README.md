@@ -32,3 +32,10 @@ Links: .../index.html (students), .../faculty.html, .../admin.html.
 - Every user's Firebase login is an alias of the admin mailbox (`10xcadd+nishad_102@gmail.com`), so reset emails land in the 10xcadd@gmail.com inbox.
 - Forgot password: user taps "Forgot password?" and enters their ID. Admin gets a Firebase email (check Spam), opens the link, sets a new password, then Users > Reset password > type it > Send on WhatsApp.
 - After updating, re-publish `firebase/firestore.rules` (it now lets a user clear their own must-change-password flag).
+
+## Add faculty and students (admin)
+1. Courses > Load institute syllabus.
+2. Faculty > + Add faculty: name, WhatsApp number, tick the software they teach.
+3. Students > + Add student: name, WhatsApp number, admission date, tick software and pick the faculty for each.
+4. Each faculty sees only the students assigned to them. Students > Completion marks a course complete (reason required below 100% verified). Delete removes the profile and is logged in the Audit log.
+5. Re-publish `firebase/firestore.rules` after every update of this package.

@@ -7,8 +7,9 @@ service cloud.firestore {
     function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
 
     match /users/{u} {
+      // Own profile; admin sees all; faculty see only students assigned to them.
       allow read: if ok() && (request.auth.uid == u || me().role == 'admin'
-                     || (me().role == 'faculty' && resource.data.role == 'student'));
+                     || (me().role == 'faculty' && request.auth.uid in resource.data.get('facultyUids', [])));
       allow write: if role('admin');
       // A user may only clear their own must-change-password flag.
       allow update: if ok() && request.auth.uid == u && changed().hasOnly(['mustChange']) && request.resource.data.mustChange == false;
@@ -20,7 +21,7 @@ service cloud.firestore {
     match /sessions/{s} {
       allow read: if ok() && (me().role == 'admin' || resource.data.studentUid == request.auth.uid
                      || resource.data.facultyUid == request.auth.uid);
-      // Faculty records a session. It always starts as "taught"; never approved.
+      // Faculty records a session for a student assigned to them. It starts as "taught", never approved.
       allow create: if role('faculty')
         && request.resource.data.facultyUid == request.auth.uid
         && request.resource.data.status == 'taught'
@@ -29,10 +30,11 @@ service cloud.firestore {
         && request.resource.data.keys().hasOnly(['courseId','topicIds','studentUid','studentId','studentName',
              'facultyUid','facultyName','date','title','notes','status','createdAt'])
         && me().courses.hasAny([request.resource.data.courseId])
-        && get(/databases/$(database)/documents/users/$(request.resource.data.studentUid))
-             .data.courses.hasAny([request.resource.data.courseId]);
+        && get(/databases/$(database)/documents/users/$(request.resource.data.studentUid)).data
+             .enrol[request.resource.data.courseId].uid == request.auth.uid
+        && !(request.resource.data.courseId in get(/databases/$(database)/documents/users/$(request.resource.data.studentUid)).data.get('completed', {}));
       allow update: if ok() && (
-        // Student response: only own session, only from taught/clarification, never to approved.
+        // Student response: own session, from taught/clarification only, never to approved.
         (me().role == 'student' && resource.data.studentUid == request.auth.uid
           && resource.data.status in ['taught','clarification']
           && changed().hasOnly(['status','rating','resp','comment','revTopics','ackAt'])
@@ -41,7 +43,7 @@ service cloud.firestore {
           && request.resource.data.resp in ['covered_ok','covered_revision','not_covered','clarify']
           && request.resource.data.status == (request.resource.data.resp == 'not_covered' ? 'disputed' : 'submitted'))
         ||
-        // Faculty review: only assigned faculty, only submitted/disputed. Disputes and non-approvals need a note.
+        // Faculty review: assigned faculty only, submitted/disputed only. Disputes and non-approvals need a note.
         (me().role == 'faculty' && resource.data.facultyUid == request.auth.uid
           && resource.data.status in ['submitted','disputed']
           && changed().hasOnly(['status','reviewNote','reviewedAt','reviewedBy','facRevTopics'])
@@ -52,7 +54,7 @@ service cloud.firestore {
                 && resource.data.resp != 'clarify')
               || request.resource.data.reviewNote.size() > 0))
         ||
-        // Admin reopen: mandatory reason, history kept in sessionEvents.
+        // Admin reopen: mandatory reason; history stays in sessionEvents.
         (me().role == 'admin'
           && changed().hasOnly(['status','reopenReason','reopenedAt','reopenedBy'])
           && request.resource.data.status == 'taught'
@@ -61,11 +63,17 @@ service cloud.firestore {
           && request.resource.data.reopenedBy == request.auth.uid));
       allow delete: if false;
     }
-    // Append-only history.
+    // Append-only histories.
     match /sessionEvents/{e} {
       allow read: if ok() && (me().role == 'admin' || resource.data.studentUid == request.auth.uid
                      || resource.data.facultyUid == request.auth.uid);
       allow create: if ok() && request.resource.data.actorUid == request.auth.uid
+                     && request.resource.data.at == request.time;
+      allow update, delete: if false;
+    }
+    match /adminLogs/{l} {
+      allow read: if role('admin');
+      allow create: if role('admin') && request.resource.data.actorUid == request.auth.uid
                      && request.resource.data.at == request.time;
       allow update, delete: if false;
     }
