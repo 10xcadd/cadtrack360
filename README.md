@@ -39,3 +39,6 @@ Links: .../index.html (students), .../faculty.html, .../admin.html.
 3. Students > + Add student: name, WhatsApp number, admission date, tick software and pick the faculty for each.
 4. Each faculty sees only the students assigned to them. Students > Completion marks a course complete (reason required below 100% verified). Delete removes the profile and is logged in the Audit log.
 5. Re-publish `firebase/firestore.rules` after every update of this package.
+
+## Mechanical courses added
+SolidWorks (20 sessions), Mastercam Milling (20), Mastercam Lathe (15), Mastercam Multiaxis (16) and Autodesk Fusion 360 (20), from the training syllabus PDFs. Admin > Courses > "Load institute syllabus" adds any course not loaded yet (safe to press again). To give a faculty member more software later: Faculty > Edit > tick it.

@@ -1069,5 +1069,783 @@
     "mandatory": true
    }
   ]
+ },
+ {
+  "id": "solidworks",
+  "name": "SolidWorks",
+  "category": "Mechanical",
+  "outcome": "Model parts and assemblies, issue toleranced manufacturing drawings with GD&T",
+  "capstone": "Part and assembly models, drawing set with tolerances, GD&T and bill of materials",
+  "hours": 40,
+  "topics": [
+   {
+    "id": "T001",
+    "module": "Interface and sketching",
+    "name": "S1 · Interface and setup",
+    "detail": "Interface and sketching · 2 hrs — user interface, CommandManager, FeatureManager, mouse and shortcut keys, templates, units (mm, ISO), document properties, file types (part, assembly, drawing), save, pack and go.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T002",
+    "module": "Interface and sketching",
+    "name": "S2 · 2D sketching",
+    "detail": "Interface and sketching · 2 hrs — line, circle, arc, slot, rectangle, polygon, spline, construction geometry, trim, extend, offset, mirror, sketch patterns.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T003",
+    "module": "Interface and sketching",
+    "name": "S3 · Relations and dimensions",
+    "detail": "Interface and sketching · 2 hrs — geometric relations, smart dimension, fully defined sketches, sketch colours and status, fixing over-defined and under-defined sketches.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T004",
+    "module": "Part modeling",
+    "name": "S4 · Base features",
+    "detail": "Part modeling · 2 hrs — extruded boss and cut, end conditions, draft, thin feature, revolved boss and cut.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T005",
+    "module": "Part modeling",
+    "name": "S5 · Reference geometry and advanced features",
+    "detail": "Part modeling · 2 hrs — planes, axes, points, coordinate systems, sweep, loft, helix and spring.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T006",
+    "module": "Part modeling",
+    "name": "S6 · Holes and threads",
+    "detail": "Part modeling · 2 hrs — Hole Wizard (drilled, tapped, counterbore, countersink), cosmetic threads, modelled threads, slots.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T007",
+    "module": "Part modeling",
+    "name": "S7 · Dress-up features",
+    "detail": "Part modeling · 2 hrs — fillet, chamfer, shell, rib, draft, dome, wrap.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T008",
+    "module": "Part modeling",
+    "name": "S8 · Patterns and editing",
+    "detail": "Part modeling · 2 hrs — linear, circular, sketch-driven and fill patterns, mirror, rollback, rebuild errors, editing and repairing features.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T009",
+    "module": "Assemblies",
+    "name": "S9 · Bottom-up assembly",
+    "detail": "Assemblies · 2 hrs — inserting components, standard mates (coincident, concentric, distance, angle), fixed and floating components, sub-assemblies.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T010",
+    "module": "Assemblies",
+    "name": "S10 · Advanced mates and fasteners",
+    "detail": "Assemblies · 3 hrs — width, gear and limit mates, Toolbox bolts, nuts, washers and bearings, component patterns, mirroring components.",
+    "hrs": 3,
+    "mandatory": true
+   },
+   {
+    "id": "T011",
+    "module": "Assemblies",
+    "name": "S11 · Assembly analysis",
+    "detail": "Assemblies · 2 hrs — exploded views, interference and clearance check, section views, mass properties, motion study basics, bill of materials.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T012",
+    "module": "Engineering drawings",
+    "name": "S12 · Drawing setup",
+    "detail": "Engineering drawings · 2 hrs — ISO and ASME standards, sheet formats, title block linked to custom properties, model views, projected and auxiliary views.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T013",
+    "module": "Engineering drawings",
+    "name": "S13 · Detailed views",
+    "detail": "Engineering drawings · 2 hrs — section, detail, broken-out section, break and crop views, view alignment, scale.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T014",
+    "module": "Engineering drawings",
+    "name": "S14 · Dimensioning and tolerances",
+    "detail": "Engineering drawings · 2 hrs — model items, smart and ordinate dimensions, limit, bilateral and fit tolerances, hole and thread callouts.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T015",
+    "module": "Engineering drawings",
+    "name": "S15 · GD&T and surface finish",
+    "detail": "Engineering drawings · 2 hrs — datum features, feature control frames (form, orientation, location, runout), surface roughness symbols, general notes.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T016",
+    "module": "Engineering drawings",
+    "name": "S16 · Drawing output",
+    "detail": "Engineering drawings · 1 hrs — bill of materials, balloons, revision table, export to PDF, DWG and DXF.",
+    "hrs": 1,
+    "mandatory": true
+   },
+   {
+    "id": "T017",
+    "module": "Configurations and equations",
+    "name": "S17 · Global variables, equations, linked dimensions, Excel design tables.",
+    "detail": "Configurations and equations · 2 hrs — ",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T018",
+    "module": "Configurations and equations",
+    "name": "S18 · Configurations in parts and assemblies",
+    "detail": "Configurations and equations · 2 hrs — suppress and unsuppress, derived configurations, configuration-specific properties.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T019",
+    "module": "Capstone",
+    "name": "S19 · Capstone modelling",
+    "detail": "Capstone · 2 hrs — model a component from a reference part or a company drawing (if shared) using the techniques above.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T020",
+    "module": "Capstone",
+    "name": "S20 · Capstone drawing and review",
+    "detail": "Capstone · 2 hrs — complete drawing with tolerances, GD&T and BOM, trainer review and corrections.",
+    "hrs": 2,
+    "mandatory": true
+   }
+  ]
+ },
+ {
+  "id": "mastercam_milling",
+  "name": "Mastercam Milling",
+  "category": "Mechanical",
+  "outcome": "Program milled components, verify and post G-code",
+  "capstone": "Mastercam file, verified toolpaths, posted G-code and setup sheet for a milled component",
+  "hours": 40,
+  "topics": [
+   {
+    "id": "T001",
+    "module": "Setup and geometry",
+    "name": "S1 · Mastercam interface and workflow",
+    "detail": "Setup and geometry · 2 hrs — ribbon, Operations Manager, Toolpath Manager, machine group, units, planes (WCS, tool plane, construction plane), drawing-to-G-code workflow. CNC basics: axes, G and M codes, work offsets G54 to G59, absolute and incremental.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T002",
+    "module": "Setup and geometry",
+    "name": "S2 · Geometry creation and import",
+    "detail": "Setup and geometry · 2 hrs — create wireframe (lines, arcs, rectangles, slots), modify (trim, fillet, offset, mirror), analyse; import SolidWorks, STEP, IGES and Parasolid models, check solids, chain and select faces and edges.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T003",
+    "module": "Setup and geometry",
+    "name": "S3 · Stock and workholding",
+    "detail": "Setup and geometry · 2 hrs — stock definition (bounding box, solid), stock origin, work offset, vise and fixture setup, safety zones, Z-zero strategy.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T004",
+    "module": "2D toolpaths",
+    "name": "S4 · Facing and contour",
+    "detail": "2D toolpaths · 2 hrs — facing, 2D contour, chain direction, cutter compensation (computer, control, wear), lead in and out, multiple passes, depth cuts, tabs.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T005",
+    "module": "2D toolpaths",
+    "name": "S5 · Pocketing",
+    "detail": "2D toolpaths · 2 hrs — standard pocket, entry methods (helix, ramp, plunge), islands, finish passes, rest machining.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T006",
+    "module": "2D toolpaths",
+    "name": "S6 · Drilling",
+    "detail": "2D toolpaths · 2 hrs — drill, peck, chip-break, tap and bore cycles, point selection, spot and countersink, hole sequencing.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T007",
+    "module": "2D toolpaths",
+    "name": "S7 · Dynamic motion and slots",
+    "detail": "2D toolpaths · 2 hrs — dynamic contour, dynamic area clearing, slot mill, chamfer, thread milling.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T008",
+    "module": "2D toolpaths",
+    "name": "S8 · Engraving, transforms and multi-setup jobs",
+    "detail": "2D toolpaths · 2 hrs — engraving text, transform toolpaths (rotate, mirror), operation order, flipping the part, two-setup jobs.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T009",
+    "module": "3D toolpaths",
+    "name": "S9 · 3D machining basics",
+    "detail": "3D toolpaths · 2 hrs — solid and surface machining, containment boundaries, cut and filter tolerances, stock to leave, roughing versus finishing strategy.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T010",
+    "module": "3D toolpaths",
+    "name": "S10 · 3D roughing",
+    "detail": "3D toolpaths · 2 hrs — area clearing, core roughing, pocket roughing, parallel roughing, rest roughing.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T011",
+    "module": "3D toolpaths",
+    "name": "S11 · 3D finishing",
+    "detail": "3D toolpaths · 2 hrs — parallel, contour, scallop, radial, spiral and flowline; step-over and cusp height.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T012",
+    "module": "3D toolpaths",
+    "name": "S12 · Pencil, rest and flat finishing",
+    "detail": "3D toolpaths · 2 hrs — pencil trace, rest material, flat areas, steep and shallow control, tool shape choice (ball, bull nose, flat).",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T013",
+    "module": "3D toolpaths",
+    "name": "S13 · Mould insert project",
+    "detail": "3D toolpaths · 2 hrs — complete 3D job from roughing to finishing, operation sequencing, cycle time estimation.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T014",
+    "module": "Tooling and cutting data",
+    "name": "S14 · Tool library",
+    "detail": "Tooling and cutting data · 2 hrs — create and manage tools (end mill, ball, bull nose, face mill, drills, taps), holders, tool numbers, length and diameter offsets.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T015",
+    "module": "Tooling and cutting data",
+    "name": "S15 · Feeds and speeds",
+    "detail": "Tooling and cutting data · 3 hrs — material library for steel, stainless, aluminium and brass; spindle speed = (cutting speed x 1000) / (pi x diameter); feed = rpm x feed per tooth x flutes; depth and width of cut, coolant, tool wear, entry and exit moves.",
+    "hrs": 3,
+    "mandatory": true
+   },
+   {
+    "id": "T016",
+    "module": "Verify and post",
+    "name": "S16 · Backplot and solid verify",
+    "detail": "Verify and post · 2 hrs — backplot, verify, stock comparison, holder collision checks, gouge detection, cycle time.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T017",
+    "module": "Verify and post",
+    "name": "S17 · Post-processing and G-code review",
+    "detail": "Verify and post · 2 hrs — Fanuc-based post, NC file output, reading G00, G01, G02 and G03, G17 to G19, G40 to G42, G43, M codes, tool changes; dry run and proveout steps.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T018",
+    "module": "Verify and post",
+    "name": "S18 · Setup sheets and documentation",
+    "detail": "Verify and post · 1 hrs — setup sheet, tool list, program notes, handover to the operator.",
+    "hrs": 1,
+    "mandatory": true
+   },
+   {
+    "id": "T019",
+    "module": "Capstone",
+    "name": "S19 · Capstone programming",
+    "detail": "Capstone · 2 hrs — milled component from model to toolpaths using a company drawing if shared.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T020",
+    "module": "Capstone",
+    "name": "S20 · Capstone verify, post and review",
+    "detail": "Capstone · 2 hrs — verification, G-code, setup sheet, trainer review and corrections.",
+    "hrs": 2,
+    "mandatory": true
+   }
+  ]
+ },
+ {
+  "id": "mastercam_lathe",
+  "name": "Mastercam Lathe",
+  "category": "Mechanical",
+  "outcome": "Program turned components with threads, grooves and bores, verify and post G-code",
+  "capstone": "Mastercam file, verified toolpaths, posted G-code and setup sheet for a turned component with thread, groove and bore",
+  "hours": 30,
+  "topics": [
+   {
+    "id": "T001",
+    "module": "Lathe setup",
+    "name": "S1 · Lathe fundamentals and setup",
+    "detail": "Lathe setup · 2 hrs — lathe machine definition, X and Z axes, diameter versus radius, spindle, chuck and jaws, tailstock, stock and chuck definition, work coordinate G54, tool turret, importing a half profile from SolidWorks.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T002",
+    "module": "Lathe setup",
+    "name": "S2 · Turning tools and library",
+    "detail": "Lathe setup · 2 hrs — OD, ID, grooving, threading and boring tools, drills, insert codes and nose radius, tool origin, tool offsets and turret positions.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T003",
+    "module": "Core turning",
+    "name": "S3 · Facing and OD roughing",
+    "detail": "Core turning · 2 hrs — facing, rough toolpath, stock to leave, cutting direction, retracts, roughing canned cycle (G71).",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T004",
+    "module": "Core turning",
+    "name": "S4 · OD finishing",
+    "detail": "Core turning · 2 hrs — finish toolpath, nose radius compensation, finishing allowance, spring pass, surface finish versus feed and nose radius.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T005",
+    "module": "Core turning",
+    "name": "S5 · Grooving",
+    "detail": "Core turning · 2 hrs — OD, face and ID grooves, groove width, multiple passes, relief and undercuts, chip breaking.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T006",
+    "module": "Core turning",
+    "name": "S6 · Tapers, radii and profile turning",
+    "detail": "Core turning · 2 hrs — chamfers, tapers, arcs, combined contour work on one job.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T007",
+    "module": "Hole and thread work",
+    "name": "S7 · Drilling and boring",
+    "detail": "Hole and thread work · 2 hrs — centre drill, peck and deep-hole drilling, boring bar roughing and finishing, ID grooves.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T008",
+    "module": "Hole and thread work",
+    "name": "S8 · Threading",
+    "detail": "Hole and thread work · 2 hrs — external and internal threads, pitch and depth, number of passes, infeed, multi-start, taper threads (NPT, BSP), metric threads for hydraulic fittings.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T009",
+    "module": "Hole and thread work",
+    "name": "S9 · Parting and cut-off",
+    "detail": "Hole and thread work · 2 hrs — parting tool, part catcher, bar feed, chamfer on parting.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T010",
+    "module": "Hole and thread work",
+    "name": "S10 · Complete job",
+    "detail": "Hole and thread work · 2 hrs — fitting with bore and thread, second operation and soft jaws, tool sequence, cycle time.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T011",
+    "module": "Canned cycles and live tooling",
+    "name": "S11 · Canned cycle output",
+    "detail": "Canned cycles and live tooling · 2 hrs — G71, G70, G72, G73, G74, G75, G76 (Fanuc); canned versus long-hand output and when to use each.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T012",
+    "module": "Canned cycles and live tooling",
+    "name": "S12 · C-axis, live tooling and sub-spindle overview",
+    "detail": "Canned cycles and live tooling · 3 hrs — C-axis drilling, face and cross milling, Y-axis overview, sub-spindle transfer. Overview only unless the shop adds such a machine.",
+    "hrs": 3,
+    "mandatory": true
+   },
+   {
+    "id": "T013",
+    "module": "Verify and capstone",
+    "name": "S13 · Simulation and verification",
+    "detail": "Verify and capstone · 2 hrs — backplot, verify, collision checks with chuck and tailstock, holder gouge detection, cycle time.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T014",
+    "module": "Verify and capstone",
+    "name": "S14 · Post and G-code review",
+    "detail": "Verify and capstone · 1 hrs — lathe post, G96 and G97, G50 speed limit, G98 and G99, tool and offset codes, spindle and coolant M codes, program structure; proveout and first-article steps.",
+    "hrs": 1,
+    "mandatory": true
+   },
+   {
+    "id": "T015",
+    "module": "Verify and capstone",
+    "name": "S15 · Capstone",
+    "detail": "Verify and capstone · 2 hrs — shaft or fitting from a drawing with threads, grooves and a bore; submit file, G-code and setup sheet.",
+    "hrs": 2,
+    "mandatory": true
+   }
+  ]
+ },
+ {
+  "id": "mastercam_multiaxis",
+  "name": "Mastercam Multiaxis",
+  "category": "Mechanical",
+  "outcome": "Program 3+2, 4-axis and 5-axis parts, control the tool axis and collisions, simulate and post",
+  "capstone": "Mastercam file, 5-axis toolpaths, machine simulation record and posted code for an impeller or blade-type part",
+  "hours": 30,
+  "topics": [
+   {
+    "id": "T001",
+    "module": "Multiaxis fundamentals",
+    "name": "S1 · Machine types and kinematics",
+    "detail": "Multiaxis fundamentals · 2 hrs — 3+2, 4-axis and 5-axis machines, table-table, head-head and head-table layouts, axis naming (A, B, C), pivot points, travel limits, rotary centre lines, tool centre point control.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T002",
+    "module": "Multiaxis fundamentals",
+    "name": "S2 · Machine definition and setup",
+    "detail": "Multiaxis fundamentals · 2 hrs — multiaxis machine definition in Mastercam, stock and fixture placement in the machine, home position, work coordinate systems for rotary setups.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T003",
+    "module": "Multiaxis fundamentals",
+    "name": "S3 · 3+2 positional machining",
+    "detail": "Multiaxis fundamentals · 2 hrs — tool planes from faces, rotating operations, 2D and 3D toolpaths on tilted planes, drilling on angled faces.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T004",
+    "module": "Multiaxis fundamentals",
+    "name": "S4 · 4-axis indexing and rotary machining",
+    "detail": "Multiaxis fundamentals · 2 hrs — indexed fourth axis, rotary axis substitution, wrapping, rotary contour, 4-axis roughing and finishing, engraving on cylinders.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T005",
+    "module": "Simultaneous toolpaths",
+    "name": "S5 · Multiaxis toolpath types",
+    "detail": "Simultaneous toolpaths · 2 hrs — curve, contour, drill, wrap, parallel, flowline, swarf, morph and project; geometry selection and when to use each.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T006",
+    "module": "Simultaneous toolpaths",
+    "name": "S6 · Curve and contour",
+    "detail": "Simultaneous toolpaths · 2 hrs — 5-axis curve and 5-axis contour, cut patterns, step-over, linking settings.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T007",
+    "module": "Simultaneous toolpaths",
+    "name": "S7 · Surface finishing",
+    "detail": "Simultaneous toolpaths · 2 hrs — parallel, flowline, morph and project strategies, drive surfaces and check surfaces.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T008",
+    "module": "Simultaneous toolpaths",
+    "name": "S8 · Swarf milling",
+    "detail": "Simultaneous toolpaths · 2 hrs — ruled and tapered walls, tool contact points, swarf for blade and wall surfaces.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T009",
+    "module": "Simultaneous toolpaths",
+    "name": "S9 · Multiaxis roughing and blade work",
+    "detail": "Simultaneous toolpaths · 2 hrs — rotary roughing, blade, hub and port toolpaths for impeller-type parts.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T010",
+    "module": "Tool axis control and safety",
+    "name": "S10 · Tool axis control",
+    "detail": "Tool axis control and safety · 2 hrs — fixed, lead and tilt angles, tilt to point, line, curve or surface, tilt away from surfaces, smoothing of axis motion.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T011",
+    "module": "Tool axis control and safety",
+    "name": "S11 · Collision and gouge control",
+    "detail": "Tool axis control and safety · 2 hrs — holder and shank collision, fixture and machine collision, check surfaces, minimum tool length, shorter-tool strategies.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T012",
+    "module": "Tool axis control and safety",
+    "name": "S12 · Linking and safe moves",
+    "detail": "Tool axis control and safety · 2 hrs — retracts, rapids between tilts, entry and exit moves, singularities, axis limits, unwinding rotary axes.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T013",
+    "module": "Machine simulation and post",
+    "name": "S13 · Machine simulation",
+    "detail": "Machine simulation and post · 2 hrs — full machine model simulation, collision and axis-limit detection, cycle time. Multiaxis jobs are verified in Mastercam machine simulation.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T014",
+    "module": "Machine simulation and post",
+    "name": "S14 · 5-axis post-processing",
+    "detail": "Machine simulation and post · 1 hrs — post settings, tool centre point control (G43.4), tilted work plane (G68.2), A, B and C output, linearization, proveout steps.",
+    "hrs": 1,
+    "mandatory": true
+   },
+   {
+    "id": "T015",
+    "module": "Capstone",
+    "name": "S15 · Capstone programming",
+    "detail": "Capstone · 2 hrs — impeller or blade-type part programmed in 5 axes with tool axis and collision control.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T016",
+    "module": "Capstone",
+    "name": "S16 · Capstone simulation and review",
+    "detail": "Capstone · 1 hrs — machine simulation, posted code and trainer review.",
+    "hrs": 1,
+    "mandatory": true
+   }
+  ]
+ },
+ {
+  "id": "fusion360",
+  "name": "Autodesk Fusion 360",
+  "category": "Mechanical",
+  "outcome": "Concept to detailed, documented design: model, assemble, simulate, render and issue drawings",
+  "capstone": "Fully parametric part or assembly model with joints; stress or frequency study with a short result note; rendered image set and an exploded animation; drawing set with dimensions, tolerances, GD&T and parts list",
+  "hours": 40,
+  "topics": [
+   {
+    "id": "T001",
+    "module": "Interface and sketching",
+    "name": "S1 · Interface and fundamentals",
+    "detail": "Interface and sketching · 2 hrs — Autodesk account and cloud data, Data Panel, projects and hubs, browser, ViewCube and navigation, workspaces (Design, Render, Animation, Simulation, Drawing), timeline, parametric versus direct modeling, units, file formats (F3D, STEP, IGES, DXF), sharing, components versus bodies.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T002",
+    "module": "Interface and sketching",
+    "name": "S2 · Sketching I",
+    "detail": "Interface and sketching · 2 hrs — sketch planes, line, rectangle, circle, arc, slot, polygon, spline, construction lines, trim, extend, offset, mirror, sketch patterns.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T003",
+    "module": "Interface and sketching",
+    "name": "S3 · Sketching II",
+    "detail": "Interface and sketching · 2 hrs — dimensions, sketch constraints (coincident, tangent, parallel, perpendicular, concentric, equal, symmetry, fix), fully constrained sketches, projecting geometry, text, canvas images, sketch parameters.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T004",
+    "module": "Solid modeling",
+    "name": "S4 · Solid modeling I",
+    "detail": "Solid modeling · 2 hrs — extrude (start, extent, taper, join, cut, new body, new component), revolve, sweep, loft.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T005",
+    "module": "Solid modeling",
+    "name": "S5 · Solid modeling II",
+    "detail": "Solid modeling · 2 hrs — holes (simple, counterbore, countersink, tapped), thread feature, fillet, chamfer, shell, draft, combine, split body, press pull, offset face.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T006",
+    "module": "Solid modeling",
+    "name": "S6 · Solid modeling III",
+    "detail": "Solid modeling · 2 hrs — rectangular, circular and path patterns, mirror, construction planes, axes and points, coil, rib and web, user parameters, timeline editing and rollback, repairing feature errors.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T007",
+    "module": "Surface modeling",
+    "name": "S7 · Surface modeling I",
+    "detail": "Surface modeling · 2 hrs — surface tools, extrude, revolve, sweep and loft surfaces, patch, offset, trim and extend.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T008",
+    "module": "Surface modeling",
+    "name": "S8 · Surface modeling II",
+    "detail": "Surface modeling · 2 hrs — stitch and unstitch, thicken, ruled surface, continuity (G0, G1, G2), surface analysis (zebra, curvature comb), converting surfaces to solids; introduction to Form (T-spline) modeling.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T009",
+    "module": "Sheet metal and plastic design",
+    "name": "S9 · Sheet metal I",
+    "detail": "Sheet metal and plastic design · 2 hrs — sheet metal rules, flange, contour flange, bend, corner relief, unfold and refold, flat pattern.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T010",
+    "module": "Sheet metal and plastic design",
+    "name": "S10 · Sheet metal II and Plastic design I",
+    "detail": "Sheet metal and plastic design · 2 hrs — lofted flange, rip, hem, bend relief, flat pattern export to DXF; plastic part fundamentals (wall thickness, draft angles, ribs, bosses, radii).",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T011",
+    "module": "Sheet metal and plastic design",
+    "name": "S11 · Plastic design II",
+    "detail": "Sheet metal and plastic design · 2 hrs — snap fits, lips and grooves, vents and mounting bosses, lid and base enclosure design, draft analysis, section analysis, parting line and core and cavity introduction.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T012",
+    "module": "Assembly",
+    "name": "S12 · Assembly I",
+    "detail": "Assembly · 2 hrs — components versus bodies, new and external components, grounding, joints (rigid, revolute, slider, cylindrical, pin-slot, planar, ball), joint origins, as-built joints.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T013",
+    "module": "Assembly",
+    "name": "S13 · Assembly II",
+    "detail": "Assembly · 2 hrs — motion links, contact sets, motion study, interference check, exploded view, bill of materials, mass properties.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T014",
+    "module": "Animation and rendering",
+    "name": "S14 · Animation",
+    "detail": "Animation and rendering · 2 hrs — Animation workspace, storyboard, transform components, auto and manual explode, callouts, timeline, publishing video.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T015",
+    "module": "Animation and rendering",
+    "name": "S15 · Rendering",
+    "detail": "Animation and rendering · 2 hrs — Render workspace, appearances and materials, scene settings, environment, camera, in-canvas render, cloud render, exporting images.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T016",
+    "module": "Simulation",
+    "name": "S16 · Simulation I",
+    "detail": "Simulation · 2 hrs — Simulation workspace, preparing a model (defeaturing), materials, constraints, loads, meshing, static stress and modal frequency studies, reading results (von Mises stress, displacement, safety factor).",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T017",
+    "module": "Simulation",
+    "name": "S17 · Simulation II",
+    "detail": "Simulation · 2 hrs — thermal and thermal stress studies, contacts, mesh refinement and convergence, shape optimization overview, reading and reporting results.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T018",
+    "module": "Drawings and capstone",
+    "name": "S18 · Drawing I",
+    "detail": "Drawings and capstone · 2 hrs — Drawing workspace, templates and standards (ISO, ASME), base, projected, section, detail and auxiliary views, scale.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T019",
+    "module": "Drawings and capstone",
+    "name": "S19 · Drawing II and Capstone kickoff",
+    "detail": "Drawings and capstone · 2 hrs — dimensions, tolerances, hole and thread callouts, GD&T symbols, tables, bill of materials and balloons, export to PDF and DWG; capstone brief, scope and plan.",
+    "hrs": 2,
+    "mandatory": true
+   },
+   {
+    "id": "T020",
+    "module": "Drawings and capstone",
+    "name": "S20 · Capstone and final assessment",
+    "detail": "Drawings and capstone · 2 hrs — complete the capstone model, render and drawing set; trainer review and final assessment.",
+    "hrs": 2,
+    "mandatory": true
+   }
+  ]
  }
 ]
